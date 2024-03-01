@@ -50,7 +50,7 @@ async fn main() -> std::io::Result<()> {
 
     // Run actix server
     let conf = get_configuration(None).await.unwrap();
-    let addr = conf.leptos_options.site_addr;
+    let addr = env::var("LISTEN_ADDRESS").unwrap_or(conf.leptos_options.site_addr);
     let routes = generate_route_list(App);
     HttpServer::new(move || {
         let leptos_options = &conf.leptos_options;

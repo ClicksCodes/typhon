@@ -44,6 +44,12 @@ in {
         else builtins.toString (pkgs.writeText "typhon-password" cfg.hashedPassword);
       description = "Path to a file containing the Argon2id hash of the admin password";
     };
+    listenAddress = mkOption {
+      type = types.str;
+      default = "127.0.0.1:3000";
+      example = "0.0.0.0:8080";
+      description = "The address you want to listen on";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -82,7 +88,7 @@ in {
       serviceConfig = {
         ExecStart = pkgs.writeShellScript "typhon-start" ''
           cd ${cfg.home}
-          DATABASE_URL="typhon.sqlite" ${cfg.package}/bin/typhon -p "$(cat ${cfg.hashedPasswordFile})" -v
+          DATABASE_URL="typhon.sqlite" LISTEN_ADDRESS="${cfg.listenAddress}" ${cfg.package}/bin/typhon -p "$(cat ${cfg.hashedPasswordFile})" -v
         '';
         Type = "simple";
         User = "typhon";
